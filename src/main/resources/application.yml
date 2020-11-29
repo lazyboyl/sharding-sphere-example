@@ -9,6 +9,9 @@ pagehelper:
 server:
   port: 8798
 
+snowflakeId:
+  twepoch: 1606660865000
+
 spring:
   shardingsphere:
     # 展示修改以后的sql语句
