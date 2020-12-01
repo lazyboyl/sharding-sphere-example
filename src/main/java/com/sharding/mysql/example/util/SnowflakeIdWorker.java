@@ -15,6 +15,33 @@ public class SnowflakeIdWorker {
      * @param workerId       工作ID (0~31)
      * @param dataCenterId   数据中心ID (0~31)
      */
+    public SnowflakeIdWorker(int modCoefficient, int modVal, long workerId, long dataCenterId) {
+        this.modCoefficient = modCoefficient;
+        this.modVal = modVal;
+        // 开始时间戳设置为2019-12-31 23:59:59
+        this.twepoch = 1577807999000L;
+        if (modVal > modCoefficient || modCoefficient < 0) {
+            throw new IllegalArgumentException(String.format("modVal的值不能大于modCoefficient取余的系数的值，或者modCoefficient的值不能小于0", modCoefficient));
+        }
+        if (workerId > maxWorkerId || workerId < 0) {
+            throw new IllegalArgumentException(String.format("workerId不能大于" + maxWorkerId + "的值或者小于0", maxWorkerId));
+        }
+        if (dataCenterId > maxDataCenterId || dataCenterId < 0) {
+            throw new IllegalArgumentException(String.format("dataCenterId不能大于" + maxDataCenterId + "的值或者小于0", maxDataCenterId));
+        }
+        this.workerId = workerId;
+        this.dataCenterId = dataCenterId;
+    }
+
+    /**
+     * 构造函数
+     *
+     * @param modCoefficient 当前取余的系数，例如你设置为32，则生成的id % 32 则会等于你当前设置的modVal
+     * @param modVal         当前生成的需要取余的值,假设你希望生成的雪花ID需要取余为8，则设置为8，这个值必须要小于31,且要小于modCoefficient的值
+     * @param twepoch        起始的时间戳
+     * @param workerId       工作ID (0~31)
+     * @param dataCenterId   数据中心ID (0~31)
+     */
     public SnowflakeIdWorker(int modCoefficient, int modVal, long twepoch, long workerId, long dataCenterId) {
         this.modCoefficient = modCoefficient;
         this.modVal = modVal;
