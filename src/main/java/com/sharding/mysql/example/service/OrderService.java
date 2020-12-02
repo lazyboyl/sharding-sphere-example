@@ -6,6 +6,7 @@ import com.sharding.mysql.example.dao.OrderItemDao;
 import com.sharding.mysql.example.entity.Order;
 import com.sharding.mysql.example.entity.OrderItem;
 import com.sharding.mysql.example.util.PageUtil;
+import com.sharding.mysql.example.util.SnowflakeIdWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +39,7 @@ public class OrderService {
      * @return 返回查询结果
      */
     public List<Order> queryMyOrder(Integer userId) {
-        PageHelper.startPage(1, 1,"t.order_id desc");
+        PageHelper.startPage(2, 1, "t.order_id desc");
         HashMap<String, Object> res = PageUtil.getResult(orderDao.queryMyOrder(userId));
         return (List) res.get("rows");
     }
@@ -50,17 +51,15 @@ public class OrderService {
      * @return 返回创建结果
      */
     public Order createOrder(Order order) {
-        Integer userId = order.getUserId();
-        Integer userIdMod = userId % 3;
-        Integer orderId = random.nextInt(10000);
-        while (orderId % 3 != userIdMod) {
-            orderId = random.nextInt(10000);
-        }
+        Long userId = order.getUserId();
+        Long userIdMod = userId % 4;
+        SnowflakeIdWorker snowflakeIdWorker = new SnowflakeIdWorker(4, Integer.parseInt(userIdMod + ""), 1, 1);
+        Long orderId = snowflakeIdWorker.nextId();
         order.setOrderId(orderId);
         orderDao.insertSelective(order);
         for (OrderItem orderItem : order.getOrderItemList()) {
             orderItem.setOrderId(order.getOrderId());
-            orderItem.setOrderItemId(orderId + 3);
+            orderItem.setOrderItemId(snowflakeIdWorker.nextId());
             orderItemDao.insertSelective(orderItem);
         }
         return order;

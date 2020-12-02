@@ -3,7 +3,7 @@ package com.sharding.mysql.example.util;
 /**
  * @author linzef
  * @since 2020-11-29
- * 类描述： 生成雪花ID的工具类
+ * 类描述： 生成雪花ID的工具类，且modCoefficient取余系数只能是2,4,8,16，32才可以满足要求
  */
 public class SnowflakeIdWorker {
 
@@ -166,6 +166,7 @@ public class SnowflakeIdWorker {
                 //阻塞到下一个毫秒,获得新的时间戳
                 timestamp = tilNextMillis(lastTimestamp);
             }
+            System.out.println("sequence=>" + sequence);
         }
         //时间戳改变，毫秒内序列重置
         else {
@@ -213,12 +214,12 @@ public class SnowflakeIdWorker {
         /**
          * 取余的系数设置为16，取余的值设置为13，这样你会发现生成的雪花ID的值被16取余以后为13
          */
-        SnowflakeIdWorker idWorker = new SnowflakeIdWorker(16, 13, 28778794000L, 0, 0);
+        SnowflakeIdWorker idWorker = new SnowflakeIdWorker(16, 5, 1606660865000L, 0, 0);
         for (int i = 0; i < 100; i++) {
             long id = idWorker.nextId();
             System.out.println((Long.toBinaryString(id)));
             System.out.println(id);
-            System.out.println(id % 16);
+            System.out.println(id % 20);
         }
     }
 

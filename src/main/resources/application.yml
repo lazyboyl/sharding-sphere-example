@@ -40,17 +40,25 @@ spring:
             props:
               worker-id: 123
         sharding-algorithms:
+          order-table-complex:
+            type: OrderTableComplex
+            props:
+              algorithm-class-name: com.sharding.mysql.example.config.OrderTableComplex
+          order-db-complex:
+            type: OrderDbComplex
+            props:
+              algorithm-class-name: com.sharding.mysql.example.config.OrderDbComplex
           order-item-inline:
             type: INLINE
             props:
-              # 此处写法必须是t_order$->{order_id % 3}不能写为t_order${order_id % 3}，yml不认这种写法
-              algorithm-expression: t_order_item$->{order_id % 3}
+              # 此处写法必须是t_order$->{order_id % 3}不能写为t_order${order_id % 4}，yml不认这种写法
+              algorithm-expression: t_order_item$->{order_id % 4}
           # 规则名称必须使用-不能使用_，否则会导致无法解析，官网例子有错
           table-inline:
             type: INLINE
             props:
-              # 此处写法必须是t_order$->{order_id % 3}不能写为t_order${order_id % 3}，yml不认这种写法
-              algorithm-expression: t_order$->{order_id % 3}
+              # 此处写法必须是t_order$->{order_id % 4}不能写为t_order${order_id % 4}，yml不认这种写法
+              algorithm-expression: t_order$->{order_id % 4}
           database-inline:
             type: INLINE
             props:
@@ -58,7 +66,7 @@ spring:
         tables:
           t_order_item:
             # 配置t_order_item的分库分表的规则
-            actual-data-nodes: db$->{0..1}.t_order_item$->{0..2}
+            actual-data-nodes: db$->{0..1}.t_order_item$->{0..3}
             table-strategy:
               standard:
                 sharding-column: order_id
@@ -70,15 +78,15 @@ spring:
                 sharding-algorithm-name: database-inline
           t_order:
             # 配置t_order的分库分表的规则
-            actual-data-nodes: db$->{0..1}.t_order$->{0..2}
+            actual-data-nodes: db$->{0..1}.t_order$->{0..3}
             table-strategy:
-              standard:
-                sharding-column: order_id
-                sharding-algorithm-name: table-inline
+              complex:
+                  sharding-columns: order_id,user_id
+                  sharding-algorithm-name: order-table-complex
               # 配置t_order的分库规则
             database-strategy:
-              standard:
-                sharding-column: order_id
-                sharding-algorithm-name: database-inline
+              complex:
+                sharding-columns: order_id,user_id
+                sharding-algorithm-name: order-db-complex
     enabled: true
 

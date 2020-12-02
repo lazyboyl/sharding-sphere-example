@@ -18,26 +18,26 @@ public class OrderItem {
      */
     @Id
     @Column(name = "order_item_id")
-    private Integer orderItemId;
+    private Long orderItemId;
 
     /**
      * 订单流水ID
      */
     @Column(name = "order_id")
-    private Integer orderId;
+    private Long orderId;
 
 
     /**
      * 用户流水ID
      */
     @Column(name = "user_Id")
-    private Integer userId;
+    private Long userId;
 
     /**
      * 卖家流水ID
      */
     @Column(name = "seller_id")
-    private Integer sellerId;
+    private Long sellerId;
 
     /**
      * 订单创建时间
@@ -53,35 +53,35 @@ public class OrderItem {
         this.createTime = createTime;
     }
 
-    public Integer getOrderItemId() {
+    public Long getOrderItemId() {
         return orderItemId;
     }
 
-    public void setOrderItemId(Integer orderItemId) {
+    public void setOrderItemId(Long orderItemId) {
         this.orderItemId = orderItemId;
     }
 
-    public Integer getOrderId() {
+    public Long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Integer orderId) {
+    public void setOrderId(Long orderId) {
         this.orderId = orderId;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public Integer getSellerId() {
+    public Long getSellerId() {
         return sellerId;
     }
 
-    public void setSellerId(Integer sellerId) {
+    public void setSellerId(Long sellerId) {
         this.sellerId = sellerId;
     }
 }
