@@ -60,6 +60,26 @@ public class SnowflakeIdWorker {
     }
 
     /**
+     * 构造函数
+     *
+     * @param workerId     工作ID (0~31)
+     * @param dataCenterId 数据中心ID (0~31)
+     */
+    public SnowflakeIdWorker(long twepoch, long workerId, long dataCenterId) {
+        this.modCoefficient = 1;
+        this.modVal = 0;
+        this.twepoch = twepoch;
+        if (workerId > maxWorkerId || workerId < 0) {
+            throw new IllegalArgumentException(String.format("workerId不能大于" + maxWorkerId + "的值或者小于0", maxWorkerId));
+        }
+        if (dataCenterId > maxDataCenterId || dataCenterId < 0) {
+            throw new IllegalArgumentException(String.format("dataCenterId不能大于" + maxDataCenterId + "的值或者小于0", maxDataCenterId));
+        }
+        this.workerId = workerId;
+        this.dataCenterId = dataCenterId;
+    }
+
+    /**
      * 当前取余的系数，例如你设置为32，则生成的id % 32 则会等于你当前设置的modVal
      */
     private final int modCoefficient;
@@ -102,7 +122,7 @@ public class SnowflakeIdWorker {
     /**
      * 序列在id中占的位数
      */
-    private final long sequenceBits = 7L;
+    private final long sequenceBits = 12L - modBits;
 
     /**
      * 机器ID向左移12位
@@ -166,7 +186,6 @@ public class SnowflakeIdWorker {
                 //阻塞到下一个毫秒,获得新的时间戳
                 timestamp = tilNextMillis(lastTimestamp);
             }
-            System.out.println("sequence=>" + sequence);
         }
         //时间戳改变，毫秒内序列重置
         else {
@@ -214,12 +233,11 @@ public class SnowflakeIdWorker {
         /**
          * 取余的系数设置为16，取余的值设置为13，这样你会发现生成的雪花ID的值被16取余以后为13
          */
-        SnowflakeIdWorker idWorker = new SnowflakeIdWorker(16, 5, 1606660865000L, 0, 0);
+        SnowflakeIdWorker idWorker = new SnowflakeIdWorker(1606660865000L, 0, 0);
         for (int i = 0; i < 100; i++) {
             long id = idWorker.nextId();
             System.out.println((Long.toBinaryString(id)));
             System.out.println(id);
-            System.out.println(id % 20);
         }
     }
 
